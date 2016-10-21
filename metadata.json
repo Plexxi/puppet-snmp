@@ -1,12 +1,12 @@
 {
-  "name": "razorsedge-snmp",
-  "version": "3.6.0",
-  "author": "razorsedge",
+  "name": "plexxi-snmp",
+  "version": "3.6.1",
+  "author": "Plexxi Inc",
   "summary": "Simple Network Management Protocol is for monitoring network and computer equipment. Net-SNMP implements v1, v2c, and v3 on both IPv4 and IPv6.",
   "license": "Apache-2.0",
-  "project_page": "https://github.com/razorsedge/puppet-snmp",
-  "issues_url": "https://github.com/razorsedge/puppet-snmp/issues",
-  "source": "https://github.com/razorsedge/puppet-snmp.git",
+  "project_page": "https://github.com/Plexxi/puppet-snmp",
+  "issues_url": "https://github.com/Plexxi/puppet-snmp/issues",
+  "source": "https://github.com/Plexxi/puppet-snmp.git",
   "tags": [ "snmp", "net-snmp", "monitoring" ],
   "dependencies": [
     {
@@ -37,7 +37,7 @@
     },
     {
       "operatingsystem": "Debian",
-      "operatingsystemrelease": [ "6", "7" ]
+      "operatingsystemrelease": [ "6", "7", "8" ]
     },
     {
       "operatingsystem": "Ubuntu",
@@ -45,10 +45,6 @@
     }
   ],
   "requirements": [
-    {
-      "name": "pe",
-      "version_requirement": "3.x"
-    },
     {
       "name": "puppet",
       "version_requirement": ">=2.7.20 <5.0.0"

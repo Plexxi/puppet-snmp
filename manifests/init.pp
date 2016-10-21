@@ -15,11 +15,11 @@
 #
 # [*ro_community*]
 #   Read-only (RO) community string or array for snmptrap daemon.
-#   Default: public
+#   Default: none
 #
 # [*ro_community6*]
 #   Read-only (RO) community string or array for IPv6.
-#   Default: public
+#   Default: none
 #
 # [*rw_community*]
 #   Read-write (RW) community string or array.
@@ -47,7 +47,7 @@
 #
 # [*contact*]
 #   Responsible person for the SNMP system.
-#   Default: Unknown
+#   Default: info@plexxi.com
 #
 # [*location*]
 #   Location of the SNMP system.
@@ -59,40 +59,62 @@
 #
 # [*services*]
 #   For a host system, a good value is 72 (application + end-to-end layers).
-#   Default: 72
+#   Default: 14
 #
 # [*com2sec*]
 #   An array of VACM com2sec mappings.
 #   Must provide SECNAME, SOURCE and COMMUNITY.
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-#   Default: [ "notConfigUser default public" ]
+#   Default: []
 #
 # [*com2sec6*]
 #   An array of VACM com2sec6 mappings.
 #   Must provide SECNAME, SOURCE and COMMUNITY.
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-#   Default: [ "notConfigUser default ${ro_community}" ]
+#   Default: []
 #
 # [*groups*]
 #   An array of VACM group mappings.
 #   Must provide GROUP, {v1|v2c|usm|tsm|ksm}, SECNAME.
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-#   Default: [ 'notConfigGroup v1  notConfigUser',
-#              'notConfigGroup v2c notConfigUser' ]
+#   Default: []
 #
 # [*views*]
 #   An array of views that are available to query.
 #   Must provide VNAME, TYPE, OID, and [MASK].
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-#   Default: [ 'systemview included .1.3.6.1.2.1.1',
-#              'systemview included .1.3.6.1.2.1.25.1.1' ]
+#   Default: []
 #
 # [*accesses*]
 #   An array of access controls that are available to query.
 #   Must provide GROUP, CONTEXT, {any|v1|v2c|usm|tsm|ksm}, LEVEL, PREFX, READ,
 #   WRITE, and NOTIFY.
 #   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-#   Default: [ 'notConfigGroup "" any noauth exact systemview none none' ]
+#   Default: []
+#
+# [*ro_user*]
+#   An array of SNMP v3 read-only users, defining their respective access
+#   levels.  The auth and priv type and passwords must be defined separately in
+#   snmp::snmpv3_user stanza with title matching user name.
+#   Must provide:
+#      NAME  LEVEL (noauth|auth|priv)
+#   Optionally provide subtree OID or VACM view name:
+#      NAME  LEVEL  OID
+#      NAME  LEVEL  -V VIEWNAME
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+#   Default: []
+#
+# [*rw_user*]
+#   An array of SNMP v3 read-write users, defining their respective access
+#   levels.  The auth and priv type and passwords must be defined separately in
+#   snmp::snmpv3_user stanza with title matching user name.
+#   Must provide:
+#      NAME  LEVEL (noauth|auth|priv)
+#   Optionally provide subtree OID or VACM view name:
+#      NAME  LEVEL  OID
+#      NAME  LEVEL  -V VIEWNAME
+#   See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+#   Default: []
 #
 # [*dlmod*]
 #   Array of dlmod lines to add to the snmpd.conf file.
@@ -110,6 +132,10 @@
 #   Disable all access control checks. (yes|no)
 #   Default: no
 #
+# [*auth_trap_enable*]
+#   Enable SNMP authentication failure traps to be sent (bool)
+#   Default: false
+#
 # [*do_not_log_traps*]
 #   Disable the logging of notifications altogether. (yes|no)
 #   Default: no
@@ -117,7 +143,7 @@
 # [*do_not_log_tcpwrappers*]
 #   Disable the logging of tcpwrappers messages, e.g. "Connection from UDP: "
 #   messages in syslog. (yes|no)
-#   Default: no
+#   Default: yes
 #
 # [*trap_handlers*]
 #   An array of programs to invoke on receipt of traps.
@@ -128,6 +154,22 @@
 # [*trap_forwards*]
 #   An array of destinations to send to on receipt of traps.
 #   Must provide OID and DESTINATION (ex. "IF-MIB::linkUp udp:1.2.3.5:162").
+#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html#lbAI for details.
+#   Default: []
+#
+# [*trap_sink*]
+#   An array of destination hosts for SNMP v1 trap notifications from the
+#   agent.  Must include:   HOST   COMMUNITY
+#   HOST may be hostname or address and may include a non-standard port
+#   (default is 162).
+#   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html#lbAI for details.
+#   Default: []
+#
+# [*trap2_sink*]
+#   An array of destination hosts for SNMP v2c trap notifications from the
+#   agent.  Must include:   HOST   COMMUNITY
+#   HOST may be hostname or address and may include a non-standard port
+#   (default is 162).
 #   See http://www.net-snmp.org/docs/man/snmptrapd.conf.html#lbAI for details.
 #   Default: []
 #
@@ -274,13 +316,18 @@ class snmp (
   $groups                  = $snmp::params::groups,
   $views                   = $snmp::params::views,
   $accesses                = $snmp::params::accesses,
+  $ro_user                 = $snmp::params::ro_user,
+  $rw_user                 = $snmp::params::rw_user,
   $dlmod                   = $snmp::params::dlmod,
   $snmpd_config            = $snmp::params::snmpd_config,
   $disable_authorization   = $snmp::params::disable_authorization,
+  $auth_trap_enable        = $snmp::params::auth_trap_enable,
   $do_not_log_traps        = $snmp::params::do_not_log_traps,
   $do_not_log_tcpwrappers  = $snmp::params::do_not_log_tcpwrappers,
   $trap_handlers           = $snmp::params::trap_handlers,
   $trap_forwards           = $snmp::params::trap_forwards,
+  $trap_sink               = $snmp::params::trap_sink,
+  $trap2_sink              = $snmp::params::trap2_sink,
   $snmptrapd_config        = $snmp::params::snmptrapd_config,
   $install_client          = $snmp::params::install_client,
   $manage_client           = $snmp::params::safe_manage_client,
@@ -310,17 +357,22 @@ class snmp (
   validate_bool($service_hasstatus)
   validate_bool($service_hasrestart)
   validate_bool($openmanage_enable)
+  validate_bool($auth_trap_enable)
 
   # Validate our arrays
   validate_array($snmptrapdaddr)
   validate_array($trap_handlers)
   validate_array($trap_forwards)
+  validate_array($trap_sink)
+  validate_array($trap2_sink)
   validate_array($snmp_config)
   validate_array($com2sec)
   validate_array($com2sec6)
   validate_array($groups)
   validate_array($views)
   validate_array($accesses)
+  validate_array($ro_user)
+  validate_array($rw_user)
   validate_array($dlmod)
   validate_array($snmpd_config)
   validate_array($snmptrapd_config)
@@ -441,18 +493,19 @@ class snmp (
     notify  => Service['snmpd'],
   }
 
-  if $::osfamily != 'FreeBSD' {
-    file { 'snmpd.sysconfig':
-      ensure  => $file_ensure,
-      mode    => '0644',
-      owner   => 'root',
-      group   => 'root',
-      path    => $snmp::params::sysconfig,
-      content => template("snmp/snmpd.sysconfig-${::osfamily}.erb"),
-      require => Package['snmpd'],
-      notify  => Service['snmpd'],
-    }
-  }
+# Disable portion that stomps on /etc/default/snmpd.
+#  if $::osfamily != 'FreeBSD' {
+#    file { 'snmpd.sysconfig':
+#      ensure  => $file_ensure,
+#      mode    => '0644',
+#      owner   => 'root',
+#      group   => 'root',
+#      path    => $snmp::params::sysconfig,
+#      content => template("snmp/snmpd.sysconfig-${::osfamily}.erb"),
+#      require => Package['snmpd'],
+#      notify  => Service['snmpd'],
+#    }
+#  }
 
   file { 'snmptrapd.conf':
     ensure  => $file_ensure,

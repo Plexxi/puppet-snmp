@@ -25,6 +25,9 @@
 
 ##Overview
 
+###PROJECT FORK
+This is a fork of the puppet-snmp project at https://github.com/razorsedge/puppet-snmp.
+
 This Puppet module manages the installation and configuration of [Net-SNMP](http://www.net-snmp.org/) client, server, and trap server.  It also can create a SNMPv3 user with authentication and privacy passwords.
 
 ##Module Description
@@ -246,11 +249,11 @@ Default: [ udp:127.0.0.1:162, udp6:[::1]:162 ]
 
 #####`ro_community`
 Read-only (RO) community string or array for snmptrap daemon.
-Default: public
+Default: none
 
 #####`ro_community6`
 Read-only (RO) community string or array for IPv6.
-Default: public
+Default: none
 
 #####`rw_community`
 Read-write (RW) community string or array.
@@ -278,7 +281,7 @@ Default: ::1/128
 
 #####`contact`
 Responsible person for the SNMP system.
-Default: Unknown
+Default: info@plexxi.com
 
 #####`location`
 Location of the SNMP system.
@@ -290,27 +293,35 @@ Default: ${::fqdn}
 
 #####`services`
 For a host system, a good value is 72 (application + end-to-end layers).
-Default: 72
+Default: 14
 
 #####`com2sec`
 An array of VACM com2sec mappings.  Must provide SECNAME, SOURCE and COMMUNITY.  See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-Default: [ "notConfigUser default public" ]
+Default: []
 
 #####`com2sec6`
 An array of VACM com2sec6 mappings.  Must provide SECNAME, SOURCE and COMMUNITY.  See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-Default: [ "notConfigUser default ${ro_community}" ]
+Default: []
 
 #####`groups`
 An array of VACM group mappings.  Must provide GROUP, {v1|v2c|usm|tsm|ksm}, SECNAME.  See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-Default: [ 'notConfigGroup v1  notConfigUser', 'notConfigGroup v2c notConfigUser' ]
+Default: []
 
 #####`views`
 An array of views that are available to query.  Must provide VNAME, TYPE, OID, and [MASK].  See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-Default: [ 'systemview included .1.3.6.1.2.1.1', 'systemview included .1.3.6.1.2.1.25.1.1' ]
+Default: []
 
 #####`accesses`
 An array of access controls that are available to query.  Must provide GROUP, CONTEXT, {any|v1|v2c|usm|tsm|ksm}, LEVEL, PREFX, READ, WRITE, and NOTIFY.  See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
-Default: [ 'notConfigGroup "" any noauth exact systemview none none' ]
+Default: []
+
+#####`ro_user`
+An array of SNMP v3 read-only users, defining their respective access levels.  The auth and priv type and passwords must be defined separately in `snmp::snmpv3_user` stanza with title matching user name.  Must provide: `NAME  LEVEL (noauth|auth|priv)` Optionally provide subtree OID or VACM view name: `NAME  LEVEL  OID`   or  `NAME  LEVEL  -V VIEWNAME` See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+Default: []
+
+#####`rw_user`
+An array of SNMP v3 read-write users, defining their respective access levels.  The auth and priv type and passwords must be defined separately in `snmp::snmpv3_user` stanza with title matching user name.  Must provide: `NAME  LEVEL (noauth|auth|priv)` Optionally provide subtree OID or VACM view name: `NAME  LEVEL  OID`  or  `NAME  LEVEL  -V VIEWNAME` See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbAL for details.
+Default: []
 
 #####`dlmod`
 Array of dlmod lines to add to the snmpd.conf file.  Must provide NAME and PATH (ex. "cmaX /usr/lib64/libcmaX64.so").  See http://www.net-snmp.org/docs/man/snmpd.conf.html#lbBD for details.
@@ -325,13 +336,27 @@ Default: []
 Disable all access control checks. (yes|no)
 Default: no
 
+#####`auth_trap_enable`
+Enable SNMP authentication failure traps to be sent (bool).
+Default: false
+
 #####`do_not_log_traps`
 Disable the logging of notifications altogether. (yes|no)
 Default: no
 
 #####`do_not_log_tcpwrappers`
 Disable the logging of tcpwrappers messages, e.g. "Connection from UDP: " messages in syslog. (yes|no)
-Default: no
+Default: yes
+
+#####`trap_sink`
+An array of destination hosts for SNMP v1 trap notifications from the agent.  Must include: `HOST   COMMUNITY`.  HOST may be hostname or address and may include a non-standard port (default port is 162).  See http://www.net-snmp.org/docs/man/snmptrapd.conf.html#lbAI for details.
+Default: []
+Affects snmpd.conf
+
+#####`trap2_sink`
+An array of destination hosts for SNMP v2c trap notifications from the agent.  Must include: `HOST   COMMUNITY`.  HOST may be hostname or address and may include a non-standard port (default port is 162).  See http://www.net-snmp.org/docs/man/snmptrapd.conf.html#lbAI for details.
+Default: []
+Affects snmpd.conf
 
 #####`trap_handlers`
 An array of programs to invoke on receipt of traps.  Must provide OID and PROGRAM (ex. "IF-MIB::linkDown /bin/traps down").  See http://www.net-snmp.org/docs/man/snmptrapd.conf.html#lbAI for details.
@@ -457,9 +482,13 @@ The following parameters are available in the `::snmp::snmpv3_user` define:
 Name of the user.
 Required
 
+####`ensure`
+Ensure if present or absent.
+Required
+
 ####`authpass`
 Authentication password for the user.
-Required
+Required (even if 'ensure' is absent)
 
 ####`authtype`
 Authentication type for the user.  SHA or MD5

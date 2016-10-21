@@ -27,12 +27,12 @@ class snmp::params {
   }
 
   $ro_community = $::snmp_ro_community ? {
-    undef   => 'public',
+    undef   => undef,
     default => $::snmp_ro_community,
   }
 
   $ro_community6 = $::snmp_ro_community6 ? {
-    undef   => 'public',
+    undef   => undef,
     default => $::snmp_ro_community6,
   }
 
@@ -67,7 +67,7 @@ class snmp::params {
   }
 
   $contact = $::snmp_contact ? {
-    undef   => 'Unknown',
+    undef   => 'info@plexxi.com',
     default => $::snmp_contact,
   }
 
@@ -82,29 +82,22 @@ class snmp::params {
   }
 
   $com2sec = $::snmp_com2sec ? {
-    undef   => [
-      "notConfigUser  default       public",
-    ],
+    undef   => [],
     default => $::snmp_com2sec,
   }
 
   $com2sec6 = $::snmp_com2sec6 ? {
-    undef   => [
-      "notConfigUser  default       public",
-    ],
+    undef   => [],
     default => $::snmp_com2sec6,
   }
 
   $groups = $::snmp_groups ? {
-    undef   => [
-      'notConfigGroup v1            notConfigUser',
-      'notConfigGroup v2c           notConfigUser',
-    ],
+    undef   => [],
     default => $::snmp_groups,
   }
 
   $services = $::snmp_services ? {
-    undef   => 72,
+    undef   => 14,
     default => $::snmp_services,
   }
 
@@ -114,18 +107,23 @@ class snmp::params {
   }
 
   $views = $::snmp_views ? {
-    undef   => [
-      'systemview    included   .1.3.6.1.2.1.1',
-      'systemview    included   .1.3.6.1.2.1.25.1.1',
-    ],
+    undef   => [],
     default => $::snmp_views,
   }
 
   $accesses = $::snmp_accesses ? {
-    undef   => [
-      'notConfigGroup ""      any       noauth    exact  systemview none  none',
-    ],
+    undef   => [],
     default => $::snmp_accesses,
+  }
+
+  $ro_user = $::snmp_ro_user ? {
+    undef   => [],
+    default => $::snmp_ro_user,
+  }
+
+  $rw_user = $::snmp_rw_user ? {
+    undef   => [],
+    default => $::snmp_rw_user,
   }
 
   $dlmod = $::snmp_dlmod ? {
@@ -138,13 +136,18 @@ class snmp::params {
     default => $::snmp_disable_authorization,
   }
 
+  $auth_trap_enable = $::snmp_auth_trap_enable ? {
+    undef   => false,
+    default => $::snmp_auth_trap_enable,
+  }
+
   $do_not_log_traps = $::snmp_do_not_log_traps ? {
     undef   => 'no',
     default => $::snmp_do_not_log_traps,
   }
 
   $do_not_log_tcpwrappers = $::snmp_do_not_log_tcpwrappers ? {
-    undef   => 'no',
+    undef   => 'yes',
     default => $::snmp_do_not_log_tcpwrappers,
   }
 
@@ -156,6 +159,16 @@ class snmp::params {
   $trap_forwards = $::snmp_trap_forwards ? {
     undef   => [],
     default => $::snmp_trap_forwards,
+  }
+
+  $trap_sink = $::snmp_trap_sink ? {
+    undef   => [],
+    default => $::snmp_trap_sink,
+  }
+
+  $trap2_sink = $::snmp_trap2_sink ? {
+    undef   => [],
+    default => $::snmp_trap2_sink,
   }
 
   $snmp_config = $::snmp_snmp_config ? {
