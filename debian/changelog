@@ -1,0 +1,12 @@
+puppet-module-plexxi-snmp (3.6.1) unstable; urgency=low
+
+  * Initial packaging for Plexxi
+    - Change defaults for several params
+    - Add ::snmp params: ro_user, rw_user, auth_trap_enable, trap_sink,
+      trap2_sink
+    - Add ::snmpv3_user param: ensure
+    - Fix v3 user add/remove behavior to be sane as well as idempotent
+    - Stop mod'ing /etc/default/snmpd
+    - Indicate fork of existing project
+
+ -- Joe Lorenz <joe.lorenz@plexxi.com>  Fri, 21 Oct 2016 17:28:14 -0400

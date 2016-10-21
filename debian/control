@@ -1,0 +1,23 @@
+Source: puppet-module-plexxi-snmp
+Section: admin
+Priority: optional
+Maintainer: Joe Lorenz <joe.lorenz@plexxi.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.6
+Homepage: https://github.com/Plexxi/puppet-snmp
+
+Package: puppet-module-plexxi-snmp
+Architecture: all
+Depends: ${misc:Depends},
+         puppet-common (>= 2.7.20),
+         puppet-common (<< 5),
+         puppet-module-puppetlabs-stdlib (>= 2.3),
+         puppet-module-puppetlabs-stdlib (<< 5),
+Description: Puppet module for Net-SNMP agent config
+ Puppet lets you centrally manage every important aspect of your system
+ using a cross-platform specification language that manages all the
+ separate elements normally aggregated in different files, like users,
+ cron jobs, and hosts, along with obviously discrete elements like
+ packages, services, and files.
+ .
+ The snmp module manages the Net-SNMP agent settings.
