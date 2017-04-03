@@ -47,7 +47,7 @@
 #
 # [*contact*]
 #   Responsible person for the SNMP system.
-#   Default: info@plexxi.com
+#   Default: support@plexxi.com
 #
 # [*location*]
 #   Location of the SNMP system.
@@ -578,5 +578,7 @@ class snmp (
     hasstatus  => $service_hasstatus,
     hasrestart => $service_hasrestart,
     require    => [ Package['snmpd'], File['var-net-snmp'], ],
+    start      => 'monit start snmpd',
+    stop       => 'monit stop snmpd',
   }
 }

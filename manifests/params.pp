@@ -67,7 +67,7 @@ class snmp::params {
   }
 
   $contact = $::snmp_contact ? {
-    undef   => 'info@plexxi.com',
+    undef   => 'support@plexxi.com',
     default => $::snmp_contact,
   }
 

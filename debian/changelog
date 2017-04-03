@@ -1,3 +1,10 @@
+puppet-module-plexxi-snmp (3.6.2) unstable; urgency=medium
+
+  * Change syscontact default to 'support@plexxi.com'
+  * Adjust for monit-controlled start/stop of service
+
+ -- Joe Lorenz <joe.lorenz@plexxi.com>  Fri, 31 Mar 2017 15:53:16 -0400
+
 puppet-module-plexxi-snmp (3.6.1) unstable; urgency=low
 
   * Initial packaging for Plexxi

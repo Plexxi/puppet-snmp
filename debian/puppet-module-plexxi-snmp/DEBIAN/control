@@ -1,8 +1,8 @@
 Package: puppet-module-plexxi-snmp
-Version: 3.6.1
+Version: 3.6.2
 Architecture: all
 Maintainer: Joe Lorenz <joe.lorenz@plexxi.com>
-Installed-Size: 34
+Installed-Size: 192
 Depends: puppet-common (>= 2.7.20), puppet-common (<< 5), puppet-module-puppetlabs-stdlib (>= 2.3), puppet-module-puppetlabs-stdlib (<< 5)
 Section: admin
 Priority: optional
