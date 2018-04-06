@@ -578,7 +578,7 @@ class snmp (
     hasstatus  => $service_hasstatus,
     hasrestart => $service_hasrestart,
     require    => [ Package['snmpd'], File['var-net-snmp'], ],
-    start      => 'monit start snmpd',
-    stop       => 'monit stop snmpd',
+    start      => 'systemctl start snmpd',
+    stop       => 'systemctl stop snmpd',
   }
 }

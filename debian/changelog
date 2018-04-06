@@ -1,3 +1,9 @@
+puppet-module-plexxi-snmp (3.6.3) UNRELEASED; urgency=medium
+
+  * Modify for stretch.  Remove monit and replace with systemctl 
+
+ -- Matthew Morgan <matt.morgan@plexxi.com>  Fri, 06 Apr 2018 13:15:33 -0400
+
 puppet-module-plexxi-snmp (3.6.2) unstable; urgency=medium
 
   * Change syscontact default to 'support@plexxi.com'
