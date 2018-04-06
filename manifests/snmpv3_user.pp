@@ -107,7 +107,7 @@ define snmp::snmpv3_user (
       umask   => 0077,
     } -> exec { "engage-snmpv3-user-${title}":
       path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-      command => "monit stop ${service_name} ; sleep 2 ; echo \"${engagecmd}\" >>${snmp::params::var_net_snmp}/${daemon}.conf && mv ${tmpfile} ${snmp::params::var_net_snmp}/${title}-${daemon} ; monit start ${service_name}",
+      command => "systemctl stop ${service_name} ; sleep 2 ; echo \"${engagecmd}\" >>${snmp::params::var_net_snmp}/${daemon}.conf && mv ${tmpfile} ${snmp::params::var_net_snmp}/${title}-${daemon} ; systemctl start ${service_name}",
       unless => "cmp -s ${tmpfile} ${snmp::params::var_net_snmp}/${title}-${daemon}",
       user    => 'root',
       require => [ Package['snmpd'], File['var-net-snmp'], ],
@@ -117,7 +117,7 @@ define snmp::snmpv3_user (
   } else {
     exec { "remove-snmpv3-user-${title}":
       path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-      command => "monit stop ${service_name} ; sleep 2 ; sed -i 's/^.*\"${title}\" \"${title}\".*$//' ${snmp::params::var_net_snmp}/${daemon}.conf ; rm -f ${snmp::params::var_net_snmp}/${title}-${daemon} ; monit start ${service_name}",
+      command => "systemctl stop ${service_name} ; sleep 2 ; sed -i 's/^.*\"${title}\" \"${title}\".*$//' ${snmp::params::var_net_snmp}/${daemon}.conf ; rm -f ${snmp::params::var_net_snmp}/${title}-${daemon} ; systemctl start ${service_name}",
       onlyif  => "test -f ${snmp::params::var_net_snmp}/${title}-${daemon}",
       user    => 'root',
       require => [ Package['snmpd'], File['var-net-snmp'], ],
