@@ -24,6 +24,7 @@ describe 'snmp', :type => 'class' do
   #debianish = ['Debian', 'Ubuntu']
   suseish = ['Suse']
   freebsdish = ['FreeBSD']
+  openbsdish = ['OpenBSD']
 
   context 'on a supported osfamily, default parameters' do
       describe "for osfamily RedHat, operatingsystem RedHat, operatingsystemrelease 5.9" do
@@ -32,7 +33,9 @@ describe 'snmp', :type => 'class' do
           :osfamily               => 'RedHat',
           :operatingsystem        => 'RedHat',
           :operatingsystemrelease => '5.9',
-          :fqdn                   => 'myhost.localdomain'
+          :fqdn                   => 'myhost.localdomain',
+          :lsbmajdistrelease      => '5',
+          :operatingsystemmajrelease => '5' 
         }
         end
         it { should contain_package('snmpd').with(
@@ -147,7 +150,9 @@ describe 'snmp', :type => 'class' do
           :osfamily               => 'RedHat',
           :operatingsystem        => 'RedHat',
           :operatingsystemrelease => '6.4',
-          :fqdn                   => 'myhost.localdomain'
+          :fqdn                   => 'myhost.localdomain',
+          :lsbmajdistrelease      => '6',
+          :operatingsystemmajrelease => '6'
         }
         end
         it { should contain_package('snmpd').with(
@@ -166,7 +171,7 @@ describe 'snmp', :type => 'class' do
 
         it { should contain_file('snmpd.conf').with(
           :ensure  => 'present',
-          :mode    => '0644',
+          :mode    => '0600',
           :owner   => 'root',
           :group   => 'root',
           :path    => '/etc/snmp/snmpd.conf',
@@ -218,7 +223,7 @@ describe 'snmp', :type => 'class' do
 
         it { should contain_file('snmptrapd.conf').with(
           :ensure  => 'present',
-          :mode    => '0644',
+          :mode    => '0600',
           :owner   => 'root',
           :group   => 'root',
           :path    => '/etc/snmp/snmptrapd.conf',
@@ -264,7 +269,9 @@ describe 'snmp', :type => 'class' do
           :osfamily               => 'Debian',
           :operatingsystem        => os,
           :operatingsystemrelease => '6.0.7',
-          :fqdn                   => 'myhost2.localdomain'
+          :fqdn                   => 'myhost2.localdomain',
+          :lsbmajdistrelease      => '6',
+          :operatingsystemmajrelease => '6'
         }
         end
         it { should contain_package('snmpd').with(
@@ -369,7 +376,9 @@ describe 'snmp', :type => 'class' do
           :osfamily               => 'Suse',
           :operatingsystem        => os,
           :operatingsystemrelease => '11.1',
-          :fqdn                   => 'myhost3.localdomain'
+          :fqdn                   => 'myhost3.localdomain',
+          :lsbmajdistrelease      => '6',
+          :operatingsystemmajrelease => '6'
         }
         end
         it { should contain_package('snmpd').with(
@@ -479,7 +488,8 @@ describe 'snmp', :type => 'class' do
           :osfamily               => 'FreeBSD',
           :operatingsystem        => os,
           :operatingsystemrelease => '9.2',
-          :fqdn                   => 'myhost4.localdomain'
+          :fqdn                   => 'myhost4.localdomain',
+          :operatingsystemmajrelease => '9'
         }
         end
         it { should contain_package('snmpd').with(
@@ -561,13 +571,106 @@ describe 'snmp', :type => 'class' do
         )}
       end
     end
+
+    openbsdish.each do |os|
+      describe "for osfamily OpenBSD, operatingsystem #{os}" do
+        let(:params) {{}}
+        let :facts do {
+          :osfamily               => 'OpenBSD',
+          :operatingsystem        => os,
+          :operatingsystemrelease => '5.9',
+          :fqdn                   => 'myhost4.localdomain',
+          :operatingsystemmajrelease => '5'
+        }
+        end
+        it { should contain_package('snmpd').with(
+          :ensure => 'present',
+          :name   => 'net-snmp'
+        )}
+        it { should_not contain_class('snmp::client') }
+        it { should contain_file('var-net-snmp').with(
+          :ensure  => 'directory',
+          :mode    => '0600',
+          :owner   => '_netsnmp',
+          :group   => 'wheel',
+          :path    => '/var/net-snmp',
+          :require => 'Package[snmpd]'
+        )}
+
+        it { should contain_file('snmpd.conf').with(
+          :ensure  => 'present',
+          :mode    => '0755',
+          :owner   => 'root',
+          :group   => 'wheel',
+          :path    => '/etc/snmp/snmpd.conf',
+          :require => 'Package[snmpd]',
+          :notify  => 'Service[snmpd]'
+        )}
+        # TODO add more contents for File[snmpd.conf]
+        it 'should contain File[snmpd.conf] with expected contents' do
+          verify_contents(catalogue, 'snmpd.conf', [
+            'agentaddress udp:127.0.0.1:161,udp6:[::1]:161',
+            'rocommunity public 127.0.0.1',
+            'rocommunity6 public ::1',
+            'com2sec notConfigUser  default       public',
+            'com2sec6 notConfigUser  default       public',
+            'group   notConfigGroup v1            notConfigUser',
+            'group   notConfigGroup v2c           notConfigUser',
+            'view    systemview    included   .1.3.6.1.2.1.1',
+            'view    systemview    included   .1.3.6.1.2.1.25.1.1',
+            'access  notConfigGroup ""      any       noauth    exact  systemview none  none',
+            'sysLocation Unknown',
+            'sysContact Unknown',
+            'sysServices 72',
+            'sysName myhost4.localdomain',
+            'dontLogTCPWrappersConnects no',
+          ])
+        end
+        it { should contain_service('snmpd').with(
+          :ensure     => 'running',
+          :name       => 'netsnmpd',
+          :enable     => true,
+          :hasstatus  => true,
+          :hasrestart => true,
+          :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', ]
+        )}
+
+        it { should contain_file('snmptrapd.conf').with(
+          :ensure  => 'present',
+          :mode    => '0755',
+          :owner   => 'root',
+          :group   => 'wheel',
+          :path    => '/etc/snmp/snmptrapd.conf',
+          :require => 'Package[snmpd]',
+          :notify  => 'Service[snmptrapd]'
+        )}
+        # TODO add more contents for File[snmptrapd.conf]
+        it 'should contain File[snmptrapd.conf] with correct contents' do
+          verify_contents(catalogue, 'snmptrapd.conf', [
+            'doNotLogTraps no',
+            'authCommunity log,execute,net public',
+            'disableAuthorization no',
+          ])
+        end
+        it { should contain_service('snmptrapd').with(
+          :ensure     => 'stopped',
+          :name       => 'netsnmptrapd',
+          :enable     => false,
+          :hasstatus  => true,
+          :hasrestart => true,
+          :require    => [ 'Package[snmpd]', 'File[var-net-snmp]', ]
+        )}
+      end
+    end
   end
 
   context 'on a supported osfamily (RedHat), custom parameters' do
     let :facts do {
       :osfamily               => 'RedHat',
       :operatingsystem        => 'RedHat',
-      :operatingsystemrelease => '6.4'
+      :operatingsystemrelease => '6.4',
+      :lsbmajdistrelease      => '6',
+      :operatingsystemmajrelease => '6'
     }
     end
 
@@ -628,6 +731,12 @@ describe 'snmp', :type => 'class' do
       let(:params) {{ :service_config_perms => '0123' }}
       it { should contain_file('snmpd.conf').with_mode('0123') }
       it { should contain_file('snmptrapd.conf').with_mode('0123') }
+    end
+
+    describe 'service_config_dir_group => "anothergroup"' do
+      let(:params) {{ :service_config_dir_group => 'anothergroup' }}
+      it { should contain_file('snmpd.conf').with_group('anothergroup') }
+      it { should contain_file('snmptrapd.conf').with_group('anothergroup') }
     end
 
     describe 'install_client => true' do
@@ -761,11 +870,26 @@ describe 'snmp', :type => 'class' do
       end
     end
 
+    describe 'extends => [ "SomeArray1", "SomeArray2" ]' do
+      let(:params) {{ :extends => [ 'SomeArray1', 'SomeArray2' ] }}
+      it 'should contain File[snmpd.conf] with contents from array' do
+        verify_contents(catalogue, 'snmpd.conf', [
+          'extend SomeArray1',
+          'extend SomeArray2',
+        ])
+      end
+    end
+
     describe 'openmanage_enable => true' do
         let(:params) {{ :openmanage_enable => true }}
         it 'should contain File[snmpd.conf] with contents "smuxpeer .1.3.6.1.4.1.674.10892.1"' do
             verify_contents(catalogue, 'snmpd.conf', [
                 'smuxpeer .1.3.6.1.4.1.674.10892.1',
+            ])
+        end
+        it 'should contain File[snmpd.conf] with contents "smuxpeer .1.3.6.1.4.1.674.10893.1"' do
+            verify_contents(catalogue, 'snmpd.conf', [
+                'smuxpeer .1.3.6.1.4.1.674.10893.1',
             ])
         end
     end
@@ -844,14 +968,70 @@ describe 'snmp', :type => 'class' do
           'rocommunity b 127.0.0.2',
         ])
       end
+      it 'should contain File[snmptrapd.conf] with contents "a" and "b"' do
+        verify_contents(catalogue, 'snmptrapd.conf', [
+          'authCommunity log,execute,net a',
+          'authCommunity log,execute,net b',
+        ])
+      end
     end
+
+    describe 'master => true' do
+      let(:params) {{ :master => true }}
+      it 'should contain File[snmpd.conf] with contents "master agentx"' do
+        verify_contents(catalogue, 'snmpd.conf', [
+          'master agentx',
+        ])
+      end
+    end
+
+    describe 'master => true, with all agentx options set' do
+      let(:params) {{
+        :master => true,
+        :agentx_perms => '0644',
+        :agentx_ping_interval => '5',
+        :agentx_socket => 'unix:/var/agentx/master',
+        :agentx_timeout => '10',
+        :agentx_retries => '10',
+      }}
+      it 'should contain File[snmpd.conf] with correct contents' do
+        verify_contents(catalogue, 'snmpd.conf', [
+          'master agentx',
+          'agentXPerms 0644',
+          'agentXPingInterval 5',
+          'agentXSocket unix:/var/agentx/master',
+          'agentXTimeout 10',
+          'agentXRetries 10',
+        ])
+      end
+    end
+
+    describe 'master => false, with all agentx options set' do
+      let(:params) {{
+        :master => false,
+        :agentx_perms => '0644',
+        :agentx_ping_interval => '5',
+        :agentx_socket => 'unix:/var/agentx/master',
+        :agentx_timeout => '10',
+        :agentx_retries => '10',
+      }}
+      it { should contain_file('snmpd.conf').without_content('/master agentx/') }
+      it { should contain_file('snmpd.conf').without_content('/agentXPerms 0644/') }
+      it { should contain_file('snmpd.conf').without_content('/agentXPingInterval 5/') }
+      it { should contain_file('snmpd.conf').without_content('/agentXSocket unix:/var/agentx/master/') }
+      it { should contain_file('snmpd.conf').without_content('/agentXTimeout 10/') }
+      it { should contain_file('snmpd.conf').without_content('/agentXRetries 10/') }
+    end
+
   end
 
   context 'on a supported osfamily (Debian), custom parameters' do
     let :facts do {
       :osfamily               => 'Debian',
       :operatingsystem        => 'Debian',
-      :operatingsystemrelease => '7.0'
+      :operatingsystemrelease => '7.0',
+      :lsbmajdistrelease      => '7',
+      :operatingsystemmajrelease => '7'
     }
     end
 
@@ -892,11 +1072,39 @@ describe 'snmp', :type => 'class' do
     end
   end
 
+  context 'on a supported osfamily (Debian Stretch), custom parameters' do
+    let :facts do {
+      :osfamily               => 'Debian',
+      :operatingsystem        => 'Debian',
+      :lsbmajdistrelease      => '9',
+      :operatingsystemmajrelease => '9'
+    }
+    end
+
+    describe 'service_ensure => stopped and trap_service_ensure => running' do
+      let :params do {
+        :service_ensure      => 'stopped',
+        :trap_service_ensure => 'running'
+      }
+      end
+    end
+
+    describe 'Debian-snmp as snmp user' do
+      it 'should contain File[snmpd.sysconfig] with contents "OPTIONS="-Lsd -Lf /dev/null -u Debian-snmp -g Debian-snmp -I -smux -p /var/run/snmpd.pid""' do
+        verify_contents(catalogue, 'snmpd.sysconfig', [
+          'SNMPDOPTS=\'-Lsd -Lf /dev/null -u Debian-snmp -g Debian-snmp -I -smux -p /var/run/snmpd.pid\'', 
+        ])
+      end
+    end
+  end
+
   context 'on a supported osfamily (Suse), custom parameters' do
     let :facts do {
       :osfamily               => 'Suse',
       :operatingsystem        => 'Suse',
-      :operatingsystemrelease => '11.1'
+      :operatingsystemrelease => '11.1',
+      :lsbmajdistrelease      => '11',
+      :operatingsystemmajrelease => '11'
     }
     end
 
