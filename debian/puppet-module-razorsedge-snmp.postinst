@@ -1,5 +1,5 @@
 #!/bin/sh
-# postinst script for puppet-module-plexxi-snmp
+# postinst script for puppet-module-razorsedge-snmp
 #
 # see: dh_installdeb(1)
 
@@ -21,7 +21,7 @@ set -e
 case "$1" in
     configure)
         update-alternatives --install /usr/share/puppet/modules/snmp puppet-module-snmp \
-            /usr/share/puppet/modules.available/plexxi-snmp 500
+            /usr/share/puppet/modules.available/razorsedge-snmp 500
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

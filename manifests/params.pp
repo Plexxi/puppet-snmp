@@ -198,6 +198,20 @@ class snmp::params {
     $accesses =  []
   }
 
+  $snmp_ro_user = getvar('::snmp_ro_user')
+  if $snmp_ro_user {
+    $ro_user =  $::snmp_ro_user
+  } else {
+    $ro_user =  []
+  }
+
+  $snmp_rw_user = getvar('::snmp_rw_user')
+  if $snmp_rw_user {
+    $rw_user =  $::snmp_rw_user
+  } else {
+    $rw_user =  []
+  }
+
   $snmp_dlmod = getvar('::snmp_dlmod')
   if $snmp_dlmod {
     $dlmod =  $::snmp_dlmod
@@ -312,18 +326,11 @@ class snmp::params {
     $trap_service_ensure =  'stopped'
   }
 
-  # Since the top scope variable could be a string (if from an ENC), we might
-  # need to convert it to a boolean.
   $snmp_autoupgrade = getvar('::snmp_autoupgrade')
   if $snmp_autoupgrade {
     $autoupgrade =  $::snmp_autoupgrade
   } else {
     $autoupgrade =  false
-  }
-  if is_string($autoupgrade) {
-    $safe_autoupgrade = str2bool($autoupgrade)
-  } else {
-    $safe_autoupgrade = $autoupgrade
   }
 
   $snmp_install_client = getvar('::snmp_install_client')
@@ -339,22 +346,12 @@ class snmp::params {
   } else {
     $manage_client =  false
   }
-  if is_string($manage_client) {
-    $safe_manage_client = str2bool($manage_client)
-  } else {
-    $safe_manage_client = $manage_client
-  }
 
   $snmp_service_enable = getvar('::snmp_service_enable')
   if $snmp_service_enable {
     $service_enable =  $::snmp_service_enable
   } else {
     $service_enable =  true
-  }
-  if is_string($service_enable) {
-    $safe_service_enable = str2bool($service_enable)
-  } else {
-    $safe_service_enable = $service_enable
   }
 
   $snmp_service_hasstatus = getvar('::snmp_service_hasstatus')
@@ -363,22 +360,12 @@ class snmp::params {
   } else {
     $service_hasstatus =  true
   }
-  if is_string($service_hasstatus) {
-    $safe_service_hasstatus = str2bool($service_hasstatus)
-  } else {
-    $safe_service_hasstatus = $service_hasstatus
-  }
 
   $snmp_service_hasrestart = getvar('::snmp_service_hasrestart')
   if $snmp_service_hasrestart {
     $service_hasrestart =  $::snmp_service_hasrestart
   } else {
     $service_hasrestart =  true
-  }
-  if is_string($service_hasrestart) {
-    $safe_service_hasrestart = str2bool($service_hasrestart)
-  } else {
-    $safe_service_hasrestart = $service_hasrestart
   }
 
   $snmp_trap_service_enable = getvar('::snmp_trap_service_enable')
@@ -387,11 +374,6 @@ class snmp::params {
   } else {
     $trap_service_enable =  false
   }
-  if is_string($trap_service_enable) {
-    $safe_trap_service_enable = str2bool($trap_service_enable)
-  } else {
-    $safe_trap_service_enable = $trap_service_enable
-  }
 
   $snmp_trap_service_hasstatus = getvar('::snmp_trap_service_hasstatus')
   if $snmp_trap_service_hasstatus {
@@ -399,22 +381,12 @@ class snmp::params {
   } else {
     $trap_service_hasstatus =  true
   }
-  if is_string($trap_service_hasstatus) {
-    $safe_trap_service_hasstatus = str2bool($trap_service_hasstatus)
-  } else {
-    $safe_trap_service_hasstatus = $trap_service_hasstatus
-  }
 
   $snmp_trap_service_hasrestart = getvar('::snmp_trap_service_hasrestart')
   if $snmp_trap_service_hasrestart {
     $trap_service_hasrestart =  $::snmp_trap_service_hasrestart
   } else {
     $trap_service_hasrestart =  true
-  }
-  if is_string($trap_service_hasrestart) {
-    $safe_trap_service_hasrestart = str2bool($trap_service_hasrestart)
-  } else {
-    $safe_trap_service_hasrestart = $trap_service_hasrestart
   }
 
   $template_snmpd_conf = 'snmp/snmpd.conf.erb'

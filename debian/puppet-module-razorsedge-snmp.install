@@ -1,0 +1,8 @@
+Gemfile /usr/share/puppet/modules.available/razorsedge-snmp
+manifests /usr/share/puppet/modules.available/razorsedge-snmp
+metadata.json /usr/share/puppet/modules.available/razorsedge-snmp
+Rakefile /usr/share/puppet/modules.available/razorsedge-snmp
+samples /usr/share/puppet/modules.available/razorsedge-snmp
+spec /usr/share/puppet/modules.available/razorsedge-snmp
+templates /usr/share/puppet/modules.available/razorsedge-snmp
+tests /usr/share/puppet/modules.available/razorsedge-snmp

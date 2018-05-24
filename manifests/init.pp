@@ -336,119 +336,75 @@
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
 class snmp (
-  $agentaddress                 = $snmp::params::agentaddress,
-  $snmptrapdaddr                = $snmp::params::snmptrapdaddr,
-  $ro_community                 = $snmp::params::ro_community,
-  $ro_community6                = $snmp::params::ro_community6,
-  $rw_community                 = $snmp::params::rw_community,
-  $rw_community6                = $snmp::params::rw_community6,
-  $ro_network                   = $snmp::params::ro_network,
-  $ro_network6                  = $snmp::params::ro_network6,
-  $rw_network                   = $snmp::params::rw_network,
-  $rw_network6                  = $snmp::params::rw_network6,
-  $contact                      = $snmp::params::contact,
-  $location                     = $snmp::params::location,
-  $sysname                      = $snmp::params::sysname,
-  $services                     = $snmp::params::services,
-  $com2sec                      = $snmp::params::com2sec,
-  $com2sec6                     = $snmp::params::com2sec6,
-  $groups                       = $snmp::params::groups,
-  $views                        = $snmp::params::views,
-  $accesses                     = $snmp::params::accesses,
-  $ro_user                      = $snmp::params::ro_user,
-  $rw_user                      = $snmp::params::rw_user,
-  $dlmod                        = $snmp::params::dlmod,
-  $extends                      = $snmp::params::extends,
-  $snmpd_config                 = $snmp::params::snmpd_config,
-  $disable_authorization        = $snmp::params::disable_authorization,
-  $auth_trap_enable             = $snmp::params::auth_trap_enable,
-  $do_not_log_traps             = $snmp::params::do_not_log_traps,
-  $do_not_log_tcpwrappers       = $snmp::params::do_not_log_tcpwrappers,
-  $trap_handlers                = $snmp::params::trap_handlers,
-  $trap_forwards                = $snmp::params::trap_forwards,
-  $trap_sink                    = $snmp::params::trap_sink,
-  $trap2_sink                   = $snmp::params::trap2_sink,
-  $snmptrapd_config             = $snmp::params::snmptrapd_config,
-  $install_client               = $snmp::params::install_client,
-  $manage_client                = $snmp::params::safe_manage_client,
-  $snmp_config                  = $snmp::params::snmp_config,
-  $ensure                       = $snmp::params::ensure,
-  $autoupgrade                  = $snmp::params::safe_autoupgrade,
-  $package_name                 = $snmp::params::package_name,
-  $snmpd_options                = $snmp::params::snmpd_options,
-  $service_config_perms         = $snmp::params::service_config_perms,
-  $service_config_dir_group     = $snmp::params::service_config_dir_group,
-  $service_ensure               = $snmp::params::service_ensure,
-  $service_name                 = $snmp::params::service_name,
-  $service_enable               = $snmp::params::service_enable,
-  $service_hasstatus            = $snmp::params::service_hasstatus,
-  $service_hasrestart           = $snmp::params::service_hasrestart,
-  $snmptrapd_options            = $snmp::params::snmptrapd_options,
-  $trap_service_ensure          = $snmp::params::trap_service_ensure,
-  $trap_service_name            = $snmp::params::trap_service_name,
-  $trap_service_enable          = $snmp::params::trap_service_enable,
-  $trap_service_hasstatus       = $snmp::params::trap_service_hasstatus,
-  $trap_service_hasrestart      = $snmp::params::trap_service_hasrestart,
-  $template_snmpd_conf          = $snmp::params::template_snmpd_conf,
-  $template_snmpd_sysconfig     = $snmp::params::template_snmpd_sysconfig,
-  $template_snmptrapd           = $snmp::params::template_snmptrapd,
-  $template_snmptrapd_sysconfig = $snmp::params::template_snmptrapd_sysconfig,
-  $openmanage_enable            = $snmp::params::openmanage_enable,
-  $master                       = $snmp::params::master,
-  $agentx_perms                 = $snmp::params::agentx_perms,
-  $agentx_ping_interval         = $snmp::params::agentx_ping_interval,
-  $agentx_socket                = $snmp::params::agentx_socket,
-  $agentx_timeout               = $snmp::params::agentx_timeout,
-  $agentx_retries               = $snmp::params::agentx_retries,
+  Array[String] $agentaddress                       = $snmp::params::agentaddress,
+  Array[String] $snmptrapdaddr                      = $snmp::params::snmptrapdaddr,
+  Optional[Variant[String, Array[String]]] $ro_community  = $snmp::params::ro_community,
+  Optional[Variant[String, Array[String]]] $ro_community6 = $snmp::params::ro_community6,
+  Optional[Variant[String, Array[String]]] $rw_community  = $snmp::params::rw_community,
+  Optional[Variant[String, Array[String]]] $rw_community6 = $snmp::params::rw_community6,
+  Variant[String, Array[String]] $ro_network        = $snmp::params::ro_network,
+  Variant[String, Array[String]] $ro_network6       = $snmp::params::ro_network6,
+  Variant[String, Array[String]] $rw_network        = $snmp::params::rw_network,
+  Variant[String, Array[String]] $rw_network6       = $snmp::params::rw_network6,
+  String $contact                                   = $snmp::params::contact,
+  String $location                                  = $snmp::params::location,
+  String $sysname                                   = $snmp::params::sysname,
+  Integer $services                                 = $snmp::params::services,
+  Array[String] $com2sec                            = $snmp::params::com2sec,
+  Array[String] $com2sec6                           = $snmp::params::com2sec6,
+  Array[String] $groups                             = $snmp::params::groups,
+  Array[String] $views                              = $snmp::params::views,
+  Array[String] $accesses                           = $snmp::params::accesses,
+  Array[String] $ro_user                            = $snmp::params::ro_user,
+  Array[String] $rw_user                            = $snmp::params::rw_user,
+  Array[String] $dlmod                              = $snmp::params::dlmod,
+  Array[String] $extends                            = $snmp::params::extends,
+  Array[String] $snmpd_config                       = $snmp::params::snmpd_config,
+  Enum['yes', 'no'] $disable_authorization          = $snmp::params::disable_authorization,
+  Boolean $auth_trap_enable                         = $snmp::params::auth_trap_enable,
+  Enum['yes', 'no'] $do_not_log_traps               = $snmp::params::do_not_log_traps,
+  Enum['yes', 'no'] $do_not_log_tcpwrappers         = $snmp::params::do_not_log_tcpwrappers,
+  Array[String] $trap_handlers                      = $snmp::params::trap_handlers,
+  Array[String] $trap_forwards                      = $snmp::params::trap_forwards,
+  Array[String] $trap_sink                          = $snmp::params::trap_sink,
+  Array[String] $trap2_sink                         = $snmp::params::trap2_sink,
+  Array[String] $snmptrapd_config                   = $snmp::params::snmptrapd_config,
+  Optional[Boolean] $install_client                 = $snmp::params::install_client,
+  Optional[Boolean] $manage_client                  = $snmp::params::manage_client,
+  Array[String] $snmp_config                        = $snmp::params::snmp_config,
+  Enum['present', 'absent'] $ensure                 = $snmp::params::ensure,
+  Optional[Boolean] $autoupgrade                    = $snmp::params::autoupgrade,
+  String $package_name                              = $snmp::params::package_name,
+  String $snmpd_options                             = $snmp::params::snmpd_options,
+  String $service_config_perms                      = $snmp::params::service_config_perms,
+  String $service_config_dir_group                  = $snmp::params::service_config_dir_group,
+  Enum['running', 'stopped'] $service_ensure        = $snmp::params::service_ensure,
+  String $service_name                              = $snmp::params::service_name,
+  Boolean $service_enable                           = $snmp::params::service_enable,
+  Boolean $service_hasstatus                        = $snmp::params::service_hasstatus,
+  Boolean $service_hasrestart                       = $snmp::params::service_hasrestart,
+  String $snmptrapd_options                         = $snmp::params::snmptrapd_options,
+  Enum['running', 'stopped'] $trap_service_ensure   = $snmp::params::trap_service_ensure,
+  Optional[String] $trap_service_name               = $snmp::params::trap_service_name,
+  Boolean $trap_service_enable                      = $snmp::params::trap_service_enable,
+  Boolean $trap_service_hasstatus                   = $snmp::params::trap_service_hasstatus,
+  Boolean $trap_service_hasrestart                  = $snmp::params::trap_service_hasrestart,
+  String $template_snmpd_conf                       = $snmp::params::template_snmpd_conf,
+  String $template_snmpd_sysconfig                  = $snmp::params::template_snmpd_sysconfig,
+  String $template_snmptrapd                        = $snmp::params::template_snmptrapd,
+  String $template_snmptrapd_sysconfig              = $snmp::params::template_snmptrapd_sysconfig,
+  Boolean $openmanage_enable                        = $snmp::params::openmanage_enable,
+  Boolean $master                                   = $snmp::params::master,
+  Optional[String] $agentx_perms                    = $snmp::params::agentx_perms,
+  Optional[Integer] $agentx_ping_interval           = $snmp::params::agentx_ping_interval,
+  Optional[Integer] $agentx_socket                  = $snmp::params::agentx_socket,
+  Integer $agentx_timeout                           = $snmp::params::agentx_timeout,
+  Integer $agentx_retries                           = $snmp::params::agentx_retries,
 ) inherits snmp::params {
-  # Validate our booleans
-  validate_bool($master)
-  validate_bool($manage_client)
-  validate_bool($autoupgrade)
-  validate_bool($service_enable)
-  validate_bool($service_hasstatus)
-  validate_bool($service_hasrestart)
-  validate_bool($openmanage_enable)
-  validate_bool($auth_trap_enable)
 
-  # Validate our arrays
-  validate_array($snmptrapdaddr)
-  validate_array($trap_handlers)
-  validate_array($trap_forwards)
-  validate_array($trap_sink)
-  validate_array($trap2_sink)
-  validate_array($snmp_config)
-  validate_array($com2sec)
-  validate_array($com2sec6)
-  validate_array($groups)
-  validate_array($views)
-  validate_array($accesses)
-  validate_array($ro_user)
-  validate_array($rw_user)
-  validate_array($dlmod)
-  validate_array($extends)
-  validate_array($snmpd_config)
-  validate_array($snmptrapd_config)
-
-  # Validate our strings
-  validate_string($template_snmpd_conf)
-  validate_string($template_snmpd_sysconfig)
-  validate_string($template_snmptrapd)
-  validate_string($template_snmptrapd_sysconfig)
-
-  # Validate our numbers
-  validate_numeric($agentx_retries)
-  validate_numeric($agentx_timeout)
-
-  # Validate our regular expressions
-  $states = [ '^yes$', '^no$' ]
-  validate_re($disable_authorization, $states, '$disable_authorization must be either yes or no.')
-  validate_re($do_not_log_traps, $states, '$do_not_log_traps must be either yes or no.')
-  validate_re($do_not_log_tcpwrappers, $states, '$do_not_log_tcpwrappers must be either yes or no.')
 
   # Deprecated backwards-compatibility
   if $install_client != undef {
-    validate_bool($install_client)
     warning('snmp: parameter install_client is deprecated; please use manage_client')
     $real_manage_client = $install_client
   } else {

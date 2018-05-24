@@ -1,14 +1,14 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: puppet-module-plexxi-snmp
+Upstream-Name: puppet-module-razorsedge-snmp
 Source: https://github.com/Plexxi/puppet-snmp
 
 Files: *
-Copyright: 2016 Plexxi Inc. support@plexxi.com
-           2012-2015 Mike Arnold mike@razorsedge.org
+Copyright: 2018 Plexxi Inc. support@plexxi.com
+           2012-2018 Mike Arnold mike@razorsedge.org
 License: Apache-2.0
 
 Files: debian/*
-Copyright: 2016 Plexxi Inc. support@plexxi.com
+Copyright: 2018 Plexxi Inc. support@plexxi.com
 License: Apache-2.0
 
 License: Apache-2.0

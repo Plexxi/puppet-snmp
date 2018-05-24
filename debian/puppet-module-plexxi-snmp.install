@@ -1,5 +1,0 @@
-manifests /usr/share/puppet/modules.available/plexxi-snmp
-samples /usr/share/puppet/modules.available/plexxi-snmp
-spec /usr/share/puppet/modules.available/plexxi-snmp
-templates /usr/share/puppet/modules.available/plexxi-snmp
-tests /usr/share/puppet/modules.available/plexxi-snmp

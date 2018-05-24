@@ -1,4 +1,12 @@
-puppet-module-plexxi-snmp (3.6.3) UNRELEASED; urgency=medium
+puppet-module-razorsedge-snmp (3.9.0px1) unstable; urgency=medium
+
+  * Merge up from upstream source
+  * Adjust versioning and pkg naming to reflect Plexxi mod
+  * Update for Puppet 4
+
+ -- Joe Lorenz <joe.lorenz@plexxi.com>  Thu, 24 May 2018 13:52:46 -0400
+
+puppet-module-plexxi-snmp (3.6.3) unstable; urgency=medium
 
   * Modify for stretch.  Remove monit and replace with systemctl 
 

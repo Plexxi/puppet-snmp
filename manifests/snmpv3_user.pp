@@ -57,18 +57,15 @@
 # Copyright (C) 2012 Mike Arnold, unless otherwise noted.
 #
 define snmp::snmpv3_user (
-  $ensure,
-  $authpass,
-  $authtype = 'SHA',
-  $privpass = undef,
-  $privtype = 'AES',
-  $daemon   = 'snmpd',
+  Enum['present', 'absent'] $ensure,
+  String[8] $authpass,
+  Enum['SHA', 'MD5'] $authtype          = 'SHA',
+  Optional[String[8]] $privpass            = undef,
+  Enum['AES', 'DES'] $privtype          = 'AES',
+  Enum['snmpd', 'snmptrapd'] $daemon    = 'snmpd',
 ) {
 
   include ::snmp
-
-  $ensure_options = [ '^present$', '^absent$', ]
-  validate_re($ensure, $ensure_options, "ensure must be either 'present' or 'absent'")
 
   if ($daemon == 'snmptrapd') and ($::osfamily != 'Debian') {
     $service_name   = 'snmptrapd'
@@ -79,18 +76,6 @@ define snmp::snmpv3_user (
   }
 
   if $ensure == 'present' {
-    # Validate our regular expressions
-    $hash_options = [ '^SHA$', '^MD5$' ]
-    validate_re($authtype, $hash_options, '$authtype must be either SHA or MD5.')
-    $enc_options = [ '^AES$', '^DES$' ]
-    validate_re($privtype, $enc_options, '$privtype must be either AES or DES.')
-    $daemon_options = [ '^snmpd$', '^snmptrapd$' ]
-    validate_re($daemon, $daemon_options, '$daemon must be either snmpd or snmptrapd.')
-    validate_re($authpass, '^.{8,}$', 'authpass must be minimum 8 characters long.')
-    if $privpass {
-      validate_re($privpass, '^.{8,}$', 'privpass must be minimum 8 characters long.')
-    }
-
     $tmpfile = "/tmp/.${title}-${daemon}"
     if $privpass {
       $createcmd = "echo \"${authpass}${authtype}${privpass}${privtype}\" | sha1sum > ${tmpfile}"
@@ -104,7 +89,7 @@ define snmp::snmpv3_user (
       path    => '/bin:/sbin:/usr/bin:/usr/sbin',
       command => $createcmd,
       user    => 'root',
-      umask   => 0077,
+      umask   => '0077',
     } -> exec { "engage-snmpv3-user-${title}":
       path    => '/bin:/sbin:/usr/bin:/usr/sbin',
       command => "systemctl stop ${service_name} ; sleep 2 ; echo \"${engagecmd}\" >>${snmp::params::var_net_snmp}/${daemon}.conf && mv ${tmpfile} ${snmp::params::var_net_snmp}/${title}-${daemon} ; systemctl start ${service_name}",

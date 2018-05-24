@@ -1,4 +1,4 @@
-Source: puppet-module-plexxi-snmp
+Source: puppet-module-razorsedge-snmp
 Section: admin
 Priority: optional
 Maintainer: Joe Lorenz <joe.lorenz@plexxi.com>
@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.6
 Homepage: https://github.com/Plexxi/puppet-snmp
 
-Package: puppet-module-plexxi-snmp
+Package: puppet-module-razorsedge-snmp
 Architecture: all
 Depends: ${misc:Depends},
          puppet-common (>= 2.7.20),
