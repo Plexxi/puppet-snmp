@@ -1,3 +1,9 @@
+puppet-module-razorsedge-snmp (3.9.0px2) bionic; urgency=medium
+
+  * PXSW-7416 - raise agentx timeout to 10s 
+
+ -- Joe Lorenz <joe.lorenz@plexxi.com>  Fri, 06 Mar 2020 14:34:22 -0500
+
 puppet-module-razorsedge-snmp (3.9.0px1) unstable; urgency=medium
 
   * Merge up from upstream source
